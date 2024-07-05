@@ -1,4 +1,3 @@
-
 import os
 import pickle
 import streamlit as st
@@ -9,7 +8,7 @@ st.set_page_config(page_title="Health Assistant",
                    layout="wide",
                    page_icon="🧑‍⚕️")
 
-    
+# Load the models
 
 diabetes_model = pickle.load(open('diabetes_model.sav', 'rb'))
 
@@ -19,7 +18,6 @@ parkinsons_model = pickle.load(open('parkinsons_model.sav', 'rb'))
 
 with st.sidebar:
     selected = option_menu('Multiple Disease Prediction System',
-
                            ['Diabetes Prediction',
                             'Heart Disease Prediction',
                             'Parkinsons Prediction'],
@@ -27,6 +25,9 @@ with st.sidebar:
                            icons=['activity', 'heart', 'person'],
                            default_index=0)
 
+# Function to check if any input is empty
+def check_inputs(inputs):
+    return all(inputs)
 
 # Diabetes Prediction Page
 if selected == 'Diabetes Prediction':
@@ -61,27 +62,24 @@ if selected == 'Diabetes Prediction':
     with col2:
         Age = st.text_input('Age of the Person')
 
-
     # code for Prediction
     diab_diagnosis = ''
 
     # creating a button for Prediction
-
     if st.button('Diabetes Test Result'):
-
         user_input = [Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin,
                       BMI, DiabetesPedigreeFunction, Age]
 
-        user_input = [float(x) for x in user_input]
-
-        diab_prediction = diabetes_model.predict([user_input])
-
-        if diab_prediction[0] == 1:
-            diab_diagnosis = 'The person is diabetic'
+        if not check_inputs(user_input):
+            st.error("Please enter all the values.")
         else:
-            diab_diagnosis = 'The person is not diabetic'
-
-    st.success(diab_diagnosis)
+            user_input = [float(x) for x in user_input]
+            diab_prediction = diabetes_model.predict([user_input])
+            if diab_prediction[0] == 1:
+                diab_diagnosis = 'The person is diabetic'
+            else:
+                diab_diagnosis = 'The person is not diabetic'
+            st.success(diab_diagnosis)
 
 # Heart Disease Prediction Page
 if selected == 'Heart Disease Prediction':
@@ -134,29 +132,27 @@ if selected == 'Heart Disease Prediction':
     heart_diagnosis = ''
 
     # creating a button for Prediction
-
     if st.button('Heart Disease Test Result'):
-
         user_input = [age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]
 
-        user_input = [float(x) for x in user_input]
-
-        heart_prediction = heart_disease_model.predict([user_input])
-
-        if heart_prediction[0] == 1:
-            heart_diagnosis = 'The person is having heart disease'
+        if not check_inputs(user_input):
+            st.error("Please enter all the values.")
         else:
-            heart_diagnosis = 'The person does not have any heart disease'
-
-    st.success(heart_diagnosis)
+            user_input = [float(x) for x in user_input]
+            heart_prediction = heart_disease_model.predict([user_input])
+            if heart_prediction[0] == 1:
+                heart_diagnosis = 'The person is having heart disease'
+            else:
+                heart_diagnosis = 'The person does not have any heart disease'
+            st.success(heart_diagnosis)
 
 # Parkinson's Prediction Page
-if (selected == "Parkinsons Prediction"):
+if selected == "Parkinsons Prediction":
     
     # page title
     st.title("Parkinson's Disease Prediction using ML")
     
-    col1, col2, col3,col4,col5  = st.columns(5)  
+    col1, col2, col3, col4, col5 = st.columns(5)  
     
     with col1:
         fo = st.text_input('MDVP Fo(Hz)')
@@ -224,18 +220,20 @@ if (selected == "Parkinsons Prediction"):
     with col2:
         PPE = st.text_input('PPE')
         
-    
-    
     # code for Prediction
     parkinsons_diagnosis = ''
     
     # creating a button for Prediction    
     if st.button("Parkinson's Test Result"):
-        parkinsons_prediction = parkinsons_model.predict([[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ,DDP,Shimmer,Shimmer_dB,APQ3,APQ5,APQ,DDA,NHR,HNR,RPDE,DFA,spread1,spread2,D2,PPE]])                          
+        user_input = [fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ, DDP, Shimmer, Shimmer_dB, APQ3, APQ5, APQ, DDA, NHR, HNR, RPDE, DFA, spread1, spread2, D2, PPE]
         
-        if (parkinsons_prediction[0] == 1):
-          parkinsons_diagnosis = "The person has Parkinson's disease"
+        if not check_inputs(user_input):
+            st.error("Please enter all the values.")
         else:
-          parkinsons_diagnosis = "The person does not have Parkinson's disease"
-        
-    st.success(parkinsons_diagnosis)
+            user_input = [float(x) for x in user_input]
+            parkinsons_prediction = parkinsons_model.predict([user_input])                          
+            if parkinsons_prediction[0] == 1:
+                parkinsons_diagnosis = "The person has Parkinson's disease"
+            else:
+                parkinsons_diagnosis = "The person does not have Parkinson's disease"
+            st.success(parkinsons_diagnosis)
