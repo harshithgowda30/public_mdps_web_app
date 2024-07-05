@@ -21,8 +21,7 @@ with st.sidebar:
                            default_index=0)
 
 # Define the model directory using an absolute path
-current_dir = os.path.dirname(__file__)  # Get current script directory
-model_directory = os.path.join(current_dir, 'models')
+model_directory = 'F:\project'
 
 # Ensure the 'models' directory exists
 if not os.path.exists(model_directory):
