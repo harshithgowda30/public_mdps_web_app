@@ -21,7 +21,7 @@ with st.sidebar:
                            default_index=0)
 
 # Define the model directory
-model_directory = 'F:\\PROJECT\\models'
+model_directory = 'F:\project'
 
 # Construct the paths for each model
 diabetes_model_path = os.path.join(model_directory, 'diabetes_model.sav')
