@@ -8,27 +8,11 @@ st.set_page_config(page_title="Health Assistant",
                    layout="wide",
                    page_icon="🧑‍⚕️")
 
-    
-# getting the working directory of the main.py
-working_dir = os.path.dirname(os.path.abspath(__file__))
+st.title("Multiple Disease Prediction System")
 
-# Construct the paths for each model
-diabetes_model_path = 'F:/project/diabetes_model.sav'
-heart_disease_model_path = 'F:/project/heart_disease_model.sav'
-parkinsons_model_path = 'F:/project/parkinsons_model.sav'
-
-# Load the diabetes model
-diabetes_model = pickle.load(open(diabetes_model_path, 'rb'))
-
-# Load the heart disease model
-heart_disease_model = pickle.load(open(heart_disease_model_path, 'rb'))
-
-# Load the Parkinson's model
-parkinsons_model = pickle.load(open(parkinsons_model_path, 'rb'))
-# sidebar for navigation
+# Sidebar for navigation
 with st.sidebar:
     selected = option_menu('Multiple Disease Prediction System',
-
                            ['Diabetes Prediction',
                             'Heart Disease Prediction',
                             'Parkinsons Prediction'],
@@ -36,14 +20,32 @@ with st.sidebar:
                            icons=['activity', 'heart', 'person'],
                            default_index=0)
 
+# Define the model directory
+model_directory = 'f:project'
+
+# Construct the paths for each model
+diabetes_model_path = os.path.join(model_directory, 'diabetes_model.sav')
+heart_disease_model_path = os.path.join(model_directory, 'heart_disease_model.sav')
+parkinsons_model_path = os.path.join(model_directory, 'parkinsons_model.sav')
+
+# Load the models if files are available
+try:
+    with open(diabetes_model_path, 'rb') as file:
+        diabetes_model = pickle.load(file)
+    with open(heart_disease_model_path, 'rb') as file:
+        heart_disease_model = pickle.load(file)
+    with open(parkinsons_model_path, 'rb') as file:
+        parkinsons_model = pickle.load(file)
+    models_loaded = True
+except FileNotFoundError:
+    st.error("Model files not found. Please ensure the model files are in the 'models' directory.")
+    models_loaded = False
 
 # Diabetes Prediction Page
-if selected == 'Diabetes Prediction':
-
-    # page title
+if selected == 'Diabetes Prediction' and models_loaded:
     st.title('Diabetes Prediction using ML')
 
-    # getting the input data from the user
+    # Getting the input data from the user
     col1, col2, col3 = st.columns(3)
 
     with col1:
@@ -70,14 +72,11 @@ if selected == 'Diabetes Prediction':
     with col2:
         Age = st.text_input('Age of the Person')
 
-
-    # code for Prediction
+    # Code for Prediction
     diab_diagnosis = ''
 
-    # creating a button for Prediction
-
+    # Creating a button for Prediction
     if st.button('Diabetes Test Result'):
-
         user_input = [Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin,
                       BMI, DiabetesPedigreeFunction, Age]
 
@@ -93,9 +92,7 @@ if selected == 'Diabetes Prediction':
     st.success(diab_diagnosis)
 
 # Heart Disease Prediction Page
-if selected == 'Heart Disease Prediction':
-
-    # page title
+if selected == 'Heart Disease Prediction' and models_loaded:
     st.title('Heart Disease Prediction using ML')
 
     col1, col2, col3 = st.columns(3)
@@ -139,13 +136,11 @@ if selected == 'Heart Disease Prediction':
     with col1:
         thal = st.text_input('thal: 0 = normal; 1 = fixed defect; 2 = reversable defect')
 
-    # code for Prediction
+    # Code for Prediction
     heart_diagnosis = ''
 
-    # creating a button for Prediction
-
+    # Creating a button for Prediction
     if st.button('Heart Disease Test Result'):
-
         user_input = [age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]
 
         user_input = [float(x) for x in user_input]
@@ -160,12 +155,10 @@ if selected == 'Heart Disease Prediction':
     st.success(heart_diagnosis)
 
 # Parkinson's Prediction Page
-if (selected == "Parkinsons Prediction"):
-    
-    # page title
+if selected == "Parkinsons Prediction" and models_loaded:
     st.title("Parkinson's Disease Prediction using ML")
     
-    col1, col2, col3,col4,col5  = st.columns(5)  
+    col1, col2, col3, col4, col5 = st.columns(5)
     
     with col1:
         fo = st.text_input('MDVP Fo(Hz)')
@@ -233,18 +226,20 @@ if (selected == "Parkinsons Prediction"):
     with col2:
         PPE = st.text_input('PPE')
         
-    
-    
-    # code for Prediction
+    # Code for Prediction
     parkinsons_diagnosis = ''
     
-    # creating a button for Prediction    
+    # Creating a button for Prediction    
     if st.button("Parkinson's Test Result"):
-        parkinsons_prediction = parkinsons_model.predict([[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ,DDP,Shimmer,Shimmer_dB,APQ3,APQ5,APQ,DDA,NHR,HNR,RPDE,DFA,spread1,spread2,D2,PPE]])                          
+        user_input = [fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ, DDP, Shimmer, Shimmer_dB, APQ3, APQ5, APQ, DDA, NHR, HNR, RPDE, DFA, spread1, spread2, D2, PPE]
         
-        if (parkinsons_prediction[0] == 1):
-          parkinsons_diagnosis = "The person has Parkinson's disease"
+        user_input = [float(x) for x in user_input]
+        
+        parkinsons_prediction = parkinsons_model.predict([user_input])
+        
+        if parkinsons_prediction[0] == 1:
+            parkinsons_diagnosis = "The person has Parkinson's disease"
         else:
-          parkinsons_diagnosis = "The person does not have Parkinson's disease"
+            parkinsons_diagnosis = "The person does not have Parkinson's disease"
         
     st.success(parkinsons_diagnosis)
