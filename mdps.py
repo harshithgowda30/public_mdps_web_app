@@ -20,8 +20,14 @@ with st.sidebar:
                            icons=['activity', 'heart', 'person'],
                            default_index=0)
 
-# Define the model directory
-model_directory = 'f:project'
+# Define the model directory using an absolute path
+current_dir = os.path.dirname(__file__)  # Get current script directory
+model_directory = os.path.join(current_dir, 'models')
+
+# Ensure the 'models' directory exists
+if not os.path.exists(model_directory):
+    st.error(f"Directory '{model_directory}' not found. Please create the 'models' directory and place your model files there.")
+    st.stop()
 
 # Construct the paths for each model
 diabetes_model_path = os.path.join(model_directory, 'diabetes_model.sav')
