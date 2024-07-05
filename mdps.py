@@ -20,13 +20,8 @@ with st.sidebar:
                            icons=['activity', 'heart', 'person'],
                            default_index=0)
 
-# Define the model directory using an absolute path
-model_directory = 'F:\\project\\'
-
-# Ensure the 'models' directory exists
-if not os.path.exists(model_directory):
-    st.error(f"Directory '{model_directory}' not found. Please create the 'models' directory and place your model files there.")
-    st.stop()
+# Define the model directory
+model_directory = 'F:\\PROJECT\\models'
 
 # Construct the paths for each model
 diabetes_model_path = os.path.join(model_directory, 'diabetes_model.sav')
@@ -248,3 +243,4 @@ if selected == "Parkinsons Prediction" and models_loaded:
             parkinsons_diagnosis = "The person does not have Parkinson's disease"
         
     st.success(parkinsons_diagnosis)
+
