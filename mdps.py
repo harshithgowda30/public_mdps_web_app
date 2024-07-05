@@ -1,5 +1,5 @@
 import os
-import joblib
+import pickle
 import streamlit as st
 from streamlit_option_menu import option_menu
 
@@ -24,15 +24,18 @@ with st.sidebar:
 model_directory = 'f:project'
 
 # Construct the paths for each model
-diabetes_model_path = os.path.join(model_directory, 'diabetes_model.joblib')
-heart_disease_model_path = os.path.join(model_directory, 'heart_disease_model.joblib')
-parkinsons_model_path = os.path.join(model_directory, 'parkinsons_model.joblib')
+diabetes_model_path = os.path.join(model_directory, 'diabetes_model.sav')
+heart_disease_model_path = os.path.join(model_directory, 'heart_disease_model.sav')
+parkinsons_model_path = os.path.join(model_directory, 'parkinsons_model.sav')
 
 # Load the models if files are available
 try:
-    diabetes_model = joblib.load(diabetes_model_path)
-    heart_disease_model = joblib.load(heart_disease_model_path)
-    parkinsons_model = joblib.load(parkinsons_model_path)
+    with open(diabetes_model_path, 'rb') as file:
+        diabetes_model = pickle.load(file)
+    with open(heart_disease_model_path, 'rb') as file:
+        heart_disease_model = pickle.load(file)
+    with open(parkinsons_model_path, 'rb') as file:
+        parkinsons_model = pickle.load(file)
     models_loaded = True
 except FileNotFoundError:
     st.error("Model files not found. Please ensure the model files are in the 'models' directory.")
